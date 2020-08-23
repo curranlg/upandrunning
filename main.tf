@@ -16,7 +16,7 @@ resource "aws_instance" "example" {
     user_data = <<-EOF
                 #!/bin/bash
                 echo "Hello World, from Terraform up and running" > index.html
-                nohup busybox httpd -f -p 8080 &
+                nohup busybox httpd -f -p ${var.server_port} &
                 EOF
     tags = { 
         Name = "terraform-example" 
@@ -72,8 +72,8 @@ resource "aws_autoscaling_group" "ASG1" {
 resource "aws_security_group" "SG1" { 
     name = "terraform-example-sg" 
     ingress { 
-        from_port = 8080
-        to_port = 8080
+        from_port = var.server_port
+        to_port = var.server_port
         protocol = "tcp" 
         cidr_blocks = [ "0.0.0.0/0" ] 
         } 
