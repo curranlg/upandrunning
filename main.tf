@@ -9,6 +9,16 @@ provider "aws" {
     version = "~> 3.0"
 }
 
+resource "aws_instance" "example" { 
+    ami = "ami-0c55b159cbfafe1f0" 
+    instance_type = "t2.micro"
+    tags = { 
+        Name = "terraform-example" 
+    } 
+} 
+
+
+/*
 # Grab the default VPC
 data "aws_vpc" "default-vpc" {
     default = true
@@ -62,5 +72,5 @@ resource "aws_security_group" "SG1" {
         cidr_blocks = [ "0.0.0.0/0" ] 
         } 
 } 
-
+*/
 
