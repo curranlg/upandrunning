@@ -12,6 +12,12 @@ provider "aws" {
 resource "aws_instance" "example" { 
     ami = "ami-0c55b159cbfafe1f0" 
     instance_type = "t2.micro"
+    vpc_security_group_ids = [aws_security_group.SG1.id]
+    user_data = <<-EOF
+                #!/bin/bash
+                echo "Hello World, from Terraform up and running" > index.html
+                nohup busybox httpd -f -p 8080 &
+                EOF
     tags = { 
         Name = "terraform-example" 
     } 
@@ -60,17 +66,17 @@ resource "aws_autoscaling_group" "ASG1" {
          propagate_at_launch = true 
     } 
 } 
-
+*/
 
 # Define the Security Group
 resource "aws_security_group" "SG1" { 
     name = "terraform-example-sg" 
     ingress { 
-        from_port = var.server_port
-        to_port = var.server_port
+        from_port = 8080
+        to_port = 8080
         protocol = "tcp" 
         cidr_blocks = [ "0.0.0.0/0" ] 
         } 
 } 
-*/
+
 
