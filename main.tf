@@ -20,17 +20,33 @@ resource "aws_security_group" "SG1" {
         } 
 } 
 
-# Define the EC2 instance
-resource "aws_instance" "ec2-01" { 
-    ami = "ami-0c55b159cbfafe1f0" 
+# Define the ASG launch configuration
+resource "aws_launch_configuration" "asg-lc01" { 
+    image_id = "ami-0c55b159cbfafe1f0" 
     instance_type = "t2.micro"
-    vpc_security_group_ids = [aws_security_group.SG1.id]
+    security_groups = [aws_security_group.SG1.id]
     user_data = <<-EOF
                 #!/bin/bash
                 echo "Hello World, from Terraform up and running" > index.html
                 nohup busybox httpd -f -p ${var.server_port} &
                 EOF
-    tags = { 
-        Name = "terraform-example" 
-    } 
+    
+    # Required when using a launch configuration with an auto scaling group
+    # https://www.terraform.io/docs/providers/aws/r/launch_configuration.html 
+    lifecycle {
+        create_before_destroy = true
+    }
+}
+
+# Define the Auto Scaling Group (ASG)
+resource "aws_autoscaling_group" "asg01" {
+    launch_configuration = aws_launch_configuration.asg-lc01.name
+    min_size = 2
+    max_size = 10
+
+    tag {
+        key = "Name"
+        value = "terraform-asg-example"
+        propogate_at_launch = true
+    }
 }
