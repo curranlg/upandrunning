@@ -162,3 +162,5 @@ resource "aws_lb_listener_rule" "alb-lr-01" {
         target_group_arn = aws_lb_target_group.alb-tg-01.arn
     }
 }
+
+# New function
