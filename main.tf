@@ -9,6 +9,17 @@ provider "aws" {
     version = "~> 3.0"
 }
 
+# Set terraform backend to use S3 bucket
+terraform {
+    backend "s3" {
+        bucket = "lgc-tf-up-and-running-state-2020"
+        key = "global/s3/terraform.tfstate"
+        region = "us-east-2"
+        dynamodb_table = "terraform_locks"
+        encrypt = true
+    }
+}
+
 # Define the Security Group
 resource "aws_security_group" "SG1" { 
     name = "terraform-example-sg" 
@@ -62,7 +73,7 @@ resource "aws_autoscaling_group" "asg01" {
     }
 }
 
-# Grad reference to the default VPC
+# Grab reference to the default VPC
 data "aws_vpc" "default_vpc" {
     default = true
 }
